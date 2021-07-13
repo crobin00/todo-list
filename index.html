@@ -22,14 +22,27 @@
 		<div class="sidebar">
 			<h1>My Lists</h1>
 			<ul>
-				<li>All Lists</li>
+				<li data-list="All Lists">All Lists</li>
 			</ul>
 			<div class="add-new-list">
-				<i class="fas fa-plus-circle"></i>
-				<span>Add New List</span>
+				<i class="fas fa-plus-circle new-list-button"></i>
+				<form onsubmit="return false;">
+					<input
+						type="text"
+						id="new-list-input"
+						name="new-list-input"
+						placeholder="Add New List"
+						maxlength="20"
+					/>
+				</form>
 			</div>
 			<ul class="created-lists">
-				<li>Default<i class="fas fa-times-circle"></i></li>
+				<li data-list="Default">
+					Default<i
+						class="fas fa-times-circle"
+						data-delete="Default"
+					></i>
+				</li>
 			</ul>
 		</div>
 		<div class="main-content">
