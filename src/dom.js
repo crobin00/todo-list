@@ -12,6 +12,7 @@ function init() {
 	deleteList();
 	selectList();
 	newTaskDisplay();
+	closeTaskDisplay();
 }
 
 function createNewList() {
@@ -61,5 +62,23 @@ function newTaskDisplay() {
 		sidebar.classList.add("opacity");
 		mainDisplay.classList.add("opacity");
 		newTaskDisplay.classList.remove("hide");
+	});
+}
+
+function closeTaskDisplay() {
+	const sidebar = document.querySelector(".sidebar");
+	const mainDisplay = document.querySelector(".main-content");
+	const newTaskDisplay = document.querySelector(".new-task-div");
+	const closeTask = document.querySelector(".fa-times");
+	const doneButton = document.querySelector(".add-task-button");
+	closeTask.addEventListener("click", (e) => {
+		sidebar.classList.remove("opacity");
+		mainDisplay.classList.remove("opacity");
+		newTaskDisplay.classList.add("hide");
+	});
+	doneButton.addEventListener("click", (e) => {
+		sidebar.classList.remove("opacity");
+		mainDisplay.classList.remove("opacity");
+		newTaskDisplay.classList.add("hide");
 	});
 }
