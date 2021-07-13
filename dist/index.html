@@ -48,7 +48,7 @@
 		<div class="main-content">
 			<h3>Tasks</h3>
 			<div class="task-div">
-				<i class="fas fa-plus-circle"></i>
+				<i class="fas fa-plus-circle new-task-button"></i>
 				<div class="task">
 					<div class="priority"></div>
 					<i class="fas fa-times-circle"></i>
@@ -65,6 +65,45 @@
 					<i class="fas fa-edit"></i>
 				</div>
 			</div>
+		</div>
+		<div class="new-task-div hide">
+			<i class="fas fa-times"></i>
+			<form>
+				<label for="new-book-title">Title</label><br />
+				<input
+					type="text"
+					id="new-book-title"
+					name="new-book-title"
+				/><br />
+				<label for="new-book-description">Description</label><br />
+				<textarea id="new-book-description" name="new-book-description">
+				</textarea
+				><br />
+				<label for="new-book-due-date">Due Date:</label><br />
+				<input
+					type="date"
+					id="new-book-due-date"
+					name="new-book-due-date"
+				/><br />
+				<h4>Priority:</h4>
+				<input
+					type="radio"
+					id="urgent"
+					name="new-book-priority"
+					value="urgent"
+				/>
+				  <label for="urgent" class="priority-text">Urgent</label><br />
+				 
+				<input
+					type="radio"
+					id="normal"
+					name="new-book-priority"
+					value="normal"
+				/>
+				  <label for="normal" class="priority-text">Normal</label><br />
+				<br />
+				<button class="add-task-button" type="button">Done</button>
+			</form>
 		</div>
 	</body>
 </html>

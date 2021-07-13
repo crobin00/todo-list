@@ -11,6 +11,7 @@ function init() {
 
 	deleteList();
 	selectList();
+	newTaskDisplay();
 }
 
 function createNewList() {
@@ -37,8 +38,6 @@ function deleteList() {
 
 function selectList() {
 	document.addEventListener("click", (e) => {
-		console.log(e.target.dataset.list);
-		console.log(e.target.innerText);
 		if (e.target.dataset.list == e.target.innerText) {
 			const listElements = document.querySelectorAll("li");
 			listElements.forEach((element) => {
@@ -50,5 +49,17 @@ function selectList() {
 			);
 			selectList.classList.add("selected-list");
 		}
+	});
+}
+
+function newTaskDisplay() {
+	const sidebar = document.querySelector(".sidebar");
+	const mainDisplay = document.querySelector(".main-content");
+	const newTaskDisplay = document.querySelector(".new-task-div");
+	const addTaskButton = document.querySelector(".new-task-button");
+	addTaskButton.addEventListener("click", (e) => {
+		sidebar.classList.add("opacity");
+		mainDisplay.classList.add("opacity");
+		newTaskDisplay.classList.remove("hide");
 	});
 }
