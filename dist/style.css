@@ -1,0 +1,161 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "Roboto", sans-serif;
+	display: flex;
+	color: #172b4d;
+	font-weight: 700;
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	background: #caf0f8;
+	height: 100vh;
+	width: 20vw;
+	align-items: center;
+}
+
+h1 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 3.5rem;
+	background-color: #ade8f4;
+	width: 100%;
+	height: 10%;
+}
+
+ul {
+	width: 100%;
+	height: 5%;
+	font-size: 2rem;
+	text-align: center;
+	margin-top: 10%;
+	list-style-type: none;
+}
+
+.add-new-list {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+	width: 100%;
+	font-size: 1.4rem;
+	border-top: 1px solid #172b4d;
+	border-bottom: 1px solid #172b4d;
+	height: 3%;
+}
+
+.add-new-list > i {
+	margin-left: 5%;
+	font-size: 1.8rem;
+}
+
+.add-new-list > span {
+	margin-left: 5%;
+	font-weight: 300;
+}
+
+.created-lists > li {
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items: center;
+}
+
+.created-lists > li > i {
+	position: absolute;
+	font-size: 1.2rem;
+	left: 4%;
+}
+
+.main-content {
+	background: #f5f7f9;
+	width: 100%;
+	padding: 2% 0 0 3%;
+}
+
+h3 {
+	font-size: 2.5rem;
+}
+
+.task-div {
+	background: #eaf1f8;
+	width: 95%;
+	height: 80%;
+	border-radius: 22px;
+	position: relative;
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+.task-div > i {
+	position: absolute;
+	top: -4%;
+	right: -2%;
+	font-size: 5rem;
+	color: #38b000;
+}
+
+.task {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 4% 0 0 2%;
+	height: 20%;
+	width: 20%;
+	background: white;
+}
+
+.task > .fa-times-circle {
+	position: absolute;
+	top: -12%;
+	right: -8%;
+	font-size: 3rem;
+	background: #eaf1f8;
+	border-radius: 50%;
+}
+
+.task > .priority {
+	height: 5%;
+	width: 100%;
+	background: red;
+}
+
+.task > h5 {
+	font-size: 2rem;
+	margin-top: 2%;
+}
+
+.task > p {
+	font-size: 1.3rem;
+	margin: 0 2% 0 2%;
+}
+
+.task > .fa-check-circle {
+	position: absolute;
+	bottom: 5%;
+	left: 5%;
+	font-size: 3rem;
+}
+
+.task > span {
+	position: absolute;
+	bottom: 5%;
+	font-size: 1.3rem;
+}
+
+.task > .fa-edit {
+	position: absolute;
+	bottom: 5%;
+	right: 5%;
+	font-size: 3rem;
+}
