@@ -15,7 +15,6 @@ function init() {
 	deleteList();
 	selectList();
 	newTaskDisplay();
-	closeTaskDisplay();
 	addTaskToDiv();
 }
 
@@ -71,29 +70,36 @@ function newTaskDisplay() {
 	const mainDisplay = document.querySelector(".main-content");
 	const newTaskDisplay = document.querySelector(".new-task-div");
 	const addTaskButton = document.querySelector(".new-task-button");
+	const closeTask = document.querySelector(".fa-times");
 	addTaskButton.addEventListener("click", (e) => {
 		sidebar.classList.add("opacity");
 		mainDisplay.classList.add("opacity");
 		newTaskDisplay.classList.remove("hide");
 	});
+	closeTask.addEventListener("click", (e) => {
+		closeNewTaskDisplay();
+	});
 }
 
-function closeTaskDisplay() {
+function closeNewTaskDisplay() {
 	const sidebar = document.querySelector(".sidebar");
 	const mainDisplay = document.querySelector(".main-content");
 	const newTaskDisplay = document.querySelector(".new-task-div");
-	const closeTask = document.querySelector(".fa-times");
 	const doneButton = document.querySelector(".add-task-button");
-	closeTask.addEventListener("click", (e) => {
-		sidebar.classList.remove("opacity");
-		mainDisplay.classList.remove("opacity");
-		newTaskDisplay.classList.add("hide");
-	});
-	doneButton.addEventListener("click", (e) => {
-		sidebar.classList.remove("opacity");
-		mainDisplay.classList.remove("opacity");
-		newTaskDisplay.classList.add("hide");
-	});
+	sidebar.classList.remove("opacity");
+	mainDisplay.classList.remove("opacity");
+	newTaskDisplay.classList.add("hide");
+}
+
+function openNewTaskDisplay() {
+	const sidebar = document.querySelector(".sidebar");
+	const mainDisplay = document.querySelector(".main-content");
+	const newTaskDisplay = document.querySelector(".new-task-div");
+	const doneButton = document.querySelector(".add-task-button");
+
+	sidebar.classList.remove("opacity");
+	mainDisplay.classList.remove("opacity");
+	newTaskDisplay.classList.add("hide");
 }
 
 function addTaskToDiv() {
@@ -105,6 +111,16 @@ function addTaskToDiv() {
 	const doneButton = document.querySelector(".add-task-button");
 
 	doneButton.addEventListener("click", (e) => {
+		if (
+			title.value == "" ||
+			description.value == "" ||
+			dueDate.value == "" ||
+			(!urgent.checked && !normal.checked)
+		) {
+			alert("fill all forms idiot");
+			return;
+		}
+
 		const taskDiv = document.querySelector(".task-div");
 		const newTask = document.createElement("div");
 		newTask.innerHTML = `<div class="priority"></div>
@@ -120,10 +136,29 @@ function addTaskToDiv() {
         </span>
         <i class="fas fa-edit"></i>`;
 
-		if (urgent.checked) console.log("urgent");
-		if (normal.checked) console.log("normal");
+		const priorityColor = newTask.querySelector(".priority");
+
+		if (urgent.checked) priorityColor.style.background = "red";
+		if (normal.checked) priorityColor.style.background = "blue";
 
 		newTask.classList.add("task");
 		taskDiv.appendChild(newTask);
+
+		resetForms();
+		closeNewTaskDisplay();
 	});
+}
+
+function resetForms() {
+	const title = document.querySelector("#new-book-title");
+	const description = document.querySelector("#new-book-description");
+	const dueDate = document.querySelector("#new-book-due-date");
+	const urgent = document.querySelector("#urgent");
+	const normal = document.querySelector("#normal");
+
+	title.value = "";
+	description.value = "";
+	dueDate.value = "";
+	urgent.checked = false;
+	normal.checked = false;
 }
