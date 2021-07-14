@@ -2,6 +2,7 @@ export { init };
 import { Task } from "./tasks.js";
 import { format } from "date-fns";
 import { List, lists } from "./lists.js";
+import ja from "date-fns/locale/ja";
 
 const addNewListInput = document.querySelector("#new-list-input");
 const addNewListButton = document.querySelector(".new-list-button");
@@ -28,7 +29,6 @@ function init() {
 	selectList();
 	newTaskDisplay();
 	deleteTask();
-	//editTask();
 }
 
 function createNewList() {
@@ -45,8 +45,6 @@ function deleteList() {
 			let index;
 			for (let i = 0; i < lists.length; i++) {
 				if (lists[i].name == e.target.parentElement.innerText) {
-					console.log("im here");
-					//lists[i].tasks = null;
 					delete lists[i];
 				}
 			}
@@ -90,11 +88,16 @@ function showTasksCorrespondingToList() {
 			if (list.tasks.length == 0) {
 				console.log("empty");
 				const taskDiv = document.querySelector(".task-div");
-				taskDiv.innerHTML = `<i class="fas fa-plus-circle new-task-button"></i>`;
+				taskDiv.innerHTML = "";
+				const addTask = document.createElement("i");
+				addTask.innerHTML = `<i class="fas fa-plus-circle new-task-button"></i>`;
+				taskDiv.appendChild(addTask);
+				newTaskDisplay();
 			} else {
+				const taskDiv = document.querySelector(".task-div");
+				taskDiv.innerHTML = `<i class="fas fa-plus-circle new-task-button"></i>`;
 				list.tasks.forEach((task) => {
-					const taskDiv = document.querySelector(".task-div");
-					taskDiv.innerHTML = `<i class="fas fa-plus-circle new-task-button"></i>`;
+					console.log("wtf");
 					const newTask = document.createElement("div");
 					newTask.dataset.task = `${task.title}`;
 					newTask.innerHTML += ` <div class="priority"></div>
@@ -118,6 +121,7 @@ function showTasksCorrespondingToList() {
 					newTask.classList.add("task");
 					taskDiv.appendChild(newTask);
 				});
+				newTaskDisplay();
 			}
 		}
 	});
@@ -253,6 +257,16 @@ function deleteTask() {
 				`[data-task="${e.target.parentElement.dataset.task}"]`
 			);
 			deleteButton.remove();
+			for (let i = 0; i < lists.length; i++) {
+				for (let j = 0; j < lists[i].tasks.length; j++) {
+					if (
+						lists[i].tasks[j].title ==
+						e.target.parentElement.dataset.task
+					) {
+						delete lists[i].tasks[j];
+					}
+				}
+			}
 		}
 	});
 }
