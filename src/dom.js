@@ -5,6 +5,9 @@ const addNewListButton = document.querySelector(".new-list-button");
 const createdLists = document.querySelector(".created-lists");
 
 function init() {
+	const defaultList = document.querySelector(`[data-list="Default"]`);
+	defaultList.classList.add("selected-list");
+
 	addNewListButton.addEventListener("click", (e) => {
 		createNewList();
 	});
@@ -33,6 +36,10 @@ function deleteList() {
 			);
 			deleteButton.remove();
 			deleteList.remove();
+
+			if (deleteList.classList.contains("selected-list")) {
+				swapListOnDelete();
+			}
 		}
 	});
 }
@@ -51,6 +58,11 @@ function selectList() {
 			selectList.classList.add("selected-list");
 		}
 	});
+}
+
+function swapListOnDelete() {
+	const allLists = document.querySelector(`[data-list="All Lists"]`);
+	allLists.classList.add("selected-list");
 }
 
 function newTaskDisplay() {
