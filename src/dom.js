@@ -8,6 +8,7 @@ const addNewListInput = document.querySelector("#new-list-input");
 const addNewListButton = document.querySelector(".new-list-button");
 const createdLists = document.querySelector(".created-lists");
 const doneButton = document.querySelector(".add-task-button");
+const editButton = document.querySelector(".edit-task-button");
 //const allLists = new List("All Lists", []);
 const defaultList = new List("Default", []);
 //lists.push(allLists);
@@ -30,6 +31,7 @@ function init() {
 	newTaskDisplay();
 	deleteTask();
 	completedTask();
+	editTask();
 }
 
 function createNewList() {
@@ -137,11 +139,15 @@ function newTaskDisplay() {
 	const addTaskButton = document.querySelector(".new-task-button");
 	const closeTask = document.querySelector(".fa-times");
 	addTaskButton.addEventListener("click", (e) => {
+		resetForms();
+		editButton.classList.add("hide");
+		doneButton.classList.remove("hide");
 		openNewTaskDisplay();
 		console.log("open");
 	});
 	closeTask.addEventListener("click", (e) => {
 		closeNewTaskDisplay();
+		resetForms();
 	});
 }
 
@@ -281,6 +287,80 @@ function completedTask() {
 			completeButton.classList.toggle("completed");
 		}
 	});
+}
+
+function editTask() {
+	const title = document.querySelector("#new-book-title");
+	const description = document.querySelector("#new-book-description");
+	const dueDate = document.querySelector("#new-book-due-date");
+	const urgent = document.querySelector("#urgent");
+	const normal = document.querySelector("#normal");
+	let indexI;
+	let indexJ;
+
+	document.addEventListener("click", (e) => {
+		if (e.target.classList.contains("fa-edit")) {
+			doneButton.classList.add("hide");
+			editButton.classList.remove("hide");
+			const taskElement = document.querySelector(
+				`[data-task="${e.target.parentElement.dataset.task}"]`
+			);
+			openNewTaskDisplay();
+			for (let i = 0; i < lists.length; i++) {
+				for (let j = 0; j < lists[i].tasks.length; j++) {
+					if (
+						lists[i].tasks[j].title ==
+						e.target.parentElement.dataset.task
+					) {
+						indexI = i;
+						indexJ = j;
+						setForms(
+							lists[i].tasks[j].title,
+							lists[i].tasks[j].description,
+							lists[i].tasks[j].dueDate,
+							lists[i].tasks[j].urgent,
+							lists[i].tasks[j].normal
+						);
+					}
+				}
+			}
+			editButton.addEventListener("click", (e) => {
+				console.log("test");
+				console.log("test2");
+				lists[indexI].tasks[indexJ].title = title.value;
+				lists[indexI].tasks[indexJ].description = description.value;
+				lists[indexI].tasks[indexJ].dueDate = dueDate.value;
+				lists[indexI].tasks[indexJ].urgent = urgent.checked;
+				lists[indexI].tasks[indexJ].normal = normal.checked;
+				taskElement.innerHTML = `<div class="priority"></div>
+                <i class="fas fa-times-circle delete-task"></i>
+                <h5>${title.value}</h5>
+                <p>
+                    ${description.value}
+                </p>
+                <i class="fas fa-check-circle"></i>
+                <span
+                    >Due date <br />
+                    ${format(new Date(dueDate.value), "MM/dd/yyyy")}
+                </span>
+                <i class="fas fa-edit"></i>`;
+				const priorityColor = taskElement.querySelector(".priority");
+
+				if (urgent.checked) priorityColor.style.background = "red";
+				if (normal.checked) priorityColor.style.background = "blue";
+
+				closeNewTaskDisplay();
+				editButton.classList.add("hide");
+				doneButton.classList.remove("hide");
+			});
+		}
+	});
+}
+
+function updateTasks() {
+	for (let i = 0; i < lists.length; i++) {
+		for (let j = 0; j < lists[i].tasks.length; j++) {}
+	}
 }
 
 /*function editTask() {
