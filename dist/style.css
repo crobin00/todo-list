@@ -254,3 +254,7 @@ h3 {
 .opacity {
 	opacity: 0.3;
 }
+
+.completed > * {
+	text-decoration: line-through;
+}

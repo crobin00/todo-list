@@ -5,6 +5,7 @@ export class Task {
 		this.dueDate = dueDate;
 		this.urgent = urgent;
 		this.normal = normal;
+		this.complete = false;
 	}
 
 	getTitle() {

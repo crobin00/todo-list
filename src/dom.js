@@ -29,6 +29,7 @@ function init() {
 	selectList();
 	newTaskDisplay();
 	deleteTask();
+	completedTask();
 }
 
 function createNewList() {
@@ -263,10 +264,21 @@ function deleteTask() {
 						lists[i].tasks[j].title ==
 						e.target.parentElement.dataset.task
 					) {
-						delete lists[i].tasks[j];
+						lists[i].tasks.splice(j, 1);
 					}
 				}
 			}
+		}
+	});
+}
+
+function completedTask() {
+	document.addEventListener("click", (e) => {
+		if (e.target.classList.contains("fa-check-circle")) {
+			const completeButton = document.querySelector(
+				`[data-task="${e.target.parentElement.dataset.task}"]`
+			);
+			completeButton.classList.toggle("completed");
 		}
 	});
 }
