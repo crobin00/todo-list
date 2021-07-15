@@ -2,7 +2,6 @@ export { init };
 import { Task } from "./tasks.js";
 import { format } from "date-fns";
 import { List, lists } from "./lists.js";
-import ja from "date-fns/locale/ja";
 
 const addNewListInput = document.querySelector("#new-list-input");
 const addNewListButton = document.querySelector(".new-list-button");
@@ -13,6 +12,9 @@ const defaultList = new List("Default", []);
 lists.push(defaultList);
 
 function init() {
+	swapListOnDelete();
+	getLocalStorage();
+
 	const defaultSelected = document.querySelector(`[data-list="Default"]`);
 	defaultSelected.classList.add("selected-list");
 	addNewListButton.addEventListener("click", (e) => {
@@ -20,10 +22,16 @@ function init() {
 		sortTasks();
 	});
 
+	addNewListInput.addEventListener("keydown", (e) => {
+		if (e.keyCode === 13) {
+			createNewList();
+			sortTasks();
+		}
+	});
+
 	doneButton.addEventListener("click", (e) => {
 		addTaskToDiv();
 		sortTasks();
-		console.log(lists);
 	});
 
 	deleteList();
@@ -44,6 +52,7 @@ function createNewList() {
 		createdLists.appendChild(newList);
 		lists.push(new List(addNewListInput.value, []));
 		addNewListInput.value = "";
+		localStorage.setItem("lists", JSON.stringify(lists));
 	}
 }
 
@@ -55,6 +64,9 @@ function deleteList() {
 				if (lists[i].name == e.target.parentElement.innerText) {
 					if (lists.length == 1) {
 						alert("Error: Cannot delete all lists");
+						return;
+					} else if (lists[i].name == "Default") {
+						alert("Cannot delete default list");
 						return;
 					} else {
 						lists.splice(i, 1);
@@ -70,6 +82,7 @@ function deleteList() {
 			);
 			deleteButton.remove();
 			deleteList.remove();
+			localStorage.setItem("lists", JSON.stringify(lists));
 
 			if (deleteList.classList.contains("selected-list")) {
 				swapListOnDelete();
@@ -101,7 +114,6 @@ function showTasksCorrespondingToList() {
 	lists.forEach((list) => {
 		if (list.name == document.querySelector(".selected-list").innerText) {
 			if (list.tasks.length == 0) {
-				console.log("empty");
 				const taskDiv = document.querySelector(".task-div");
 				taskDiv.innerHTML = "";
 				const addTask = document.createElement("i");
@@ -112,7 +124,6 @@ function showTasksCorrespondingToList() {
 				const taskDiv = document.querySelector(".task-div");
 				taskDiv.innerHTML = `<i class="fas fa-plus-circle new-task-button"></i>`;
 				list.tasks.forEach((task) => {
-					console.log("wtf");
 					const newTask = document.createElement("div");
 					newTask.dataset.task = `${task.title}`;
 					newTask.innerHTML += ` <div class="priority"></div>
@@ -150,6 +161,7 @@ function swapListOnDelete() {
 	const swapDefault = document.querySelector(
 		`[data-list="${lists[0].name}"]`
 	);
+
 	swapDefault.classList.add("selected-list");
 }
 
@@ -161,7 +173,6 @@ function newTaskDisplay() {
 		editButton.classList.add("hide");
 		doneButton.classList.remove("hide");
 		openNewTaskDisplay();
-		console.log("open");
 	});
 	closeTask.addEventListener("click", (e) => {
 		closeNewTaskDisplay();
@@ -246,6 +257,7 @@ function addTaskToDiv() {
 
 	resetForms();
 	closeNewTaskDisplay();
+	localStorage.setItem("lists", JSON.stringify(lists));
 }
 
 function resetForms() {
@@ -293,6 +305,7 @@ function deleteTask() {
 					}
 				}
 			}
+			localStorage.setItem("lists", JSON.stringify(lists));
 		}
 	});
 }
@@ -312,10 +325,10 @@ function completedTask() {
 					) {
 						lists[i].tasks[j].complete =
 							!lists[i].tasks[j].complete;
-						console.log(lists[i].tasks[j].complete);
 					}
 				}
 			}
+			localStorage.setItem("lists", JSON.stringify(lists));
 		}
 	});
 }
@@ -365,8 +378,6 @@ function editTask() {
 					alert("fill all forms");
 					return;
 				} else {
-					console.log("test");
-					console.log("test2");
 					lists[indexI].tasks[indexJ].title = title.value;
 					lists[indexI].tasks[indexJ].description = description.value;
 					lists[indexI].tasks[indexJ].dueDate = dueDate.value;
@@ -396,6 +407,7 @@ function editTask() {
 					editButton.classList.add("hide");
 					doneButton.classList.remove("hide");
 					showTasksCorrespondingToList();
+					localStorage.setItem("lists", JSON.stringify(lists));
 				}
 			});
 		}
@@ -405,7 +417,6 @@ function editTask() {
 function sortTasks() {
 	for (let i = 0; i < lists.length; i++) {
 		if (lists[i].tasks.length == 0) {
-			console.log("What");
 		} else {
 			lists[i].tasks.sort(function (a, b) {
 				if (a.dueDate < b.dueDate) {
@@ -416,11 +427,66 @@ function sortTasks() {
 				}
 				return 0;
 			});
-			console.log("sorted");
 			lists[i].tasks.sort((a, b) => b.urgent - a.urgent);
-			console.log("sorted");
 			lists[i].tasks.sort((a, b) => a.complete - b.complete);
-			console.log("sorted");
 		}
 	}
+}
+
+function getLocalStorage() {
+	if (localStorage.getItem("lists") == null) {
+		return;
+	} else {
+		let stored_data = JSON.parse(localStorage.getItem("lists"));
+		stored_data.forEach((list) => {
+			lists.push(list);
+			if (list.name != "Default") {
+				const newList = document.createElement("li");
+				newList.dataset.list = list.name;
+				newList.innerHTML = `${list.name} <i class="fas fa-times-circle" data-delete="${list.name}"></i>`;
+				createdLists.appendChild(newList);
+			}
+			if (list.tasks.length == 0) {
+				const taskDiv = document.querySelector(".task-div");
+				taskDiv.innerHTML = "";
+				const addTask = document.createElement("i");
+				addTask.innerHTML = `<i class="fas fa-plus-circle new-task-button"></i>`;
+				taskDiv.appendChild(addTask);
+				newTaskDisplay();
+			} else {
+				const taskDiv = document.querySelector(".task-div");
+				taskDiv.innerHTML = `<i class="fas fa-plus-circle new-task-button"></i>`;
+				list.tasks.forEach((task) => {
+					const newTask = document.createElement("div");
+					newTask.dataset.task = `${task.title}`;
+					newTask.innerHTML += ` <div class="priority"></div>
+        <i class="fas fa-times-circle delete-task"></i>
+        <h5>${task.title}</h5>
+        <p>
+            ${task.description}
+        </p>
+        <i class="fas fa-check-circle"></i>
+        <span
+            >Due date <br />
+            ${format(new Date(task.dueDate), "MM/dd/yyyy")}
+        </span>
+        <i class="fas fa-edit"></i>`;
+
+					const priorityColor = newTask.querySelector(".priority");
+
+					if (task.urgent) priorityColor.style.background = "#c81d25";
+					if (task.normal) priorityColor.style.background = "#7189ff";
+
+					newTask.classList.add("task");
+
+					if (task.complete) newTask.classList.add("completed");
+
+					taskDiv.appendChild(newTask);
+				});
+				newTaskDisplay();
+			}
+		});
+	}
+	swapListOnDelete();
+	showTasksCorrespondingToList();
 }
