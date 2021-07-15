@@ -237,7 +237,8 @@ h3 {
 	left: 45%;
 }
 
-.add-task-button {
+.add-task-button,
+.edit-task-button {
 	width: 30%;
 	height: 55px;
 	font-size: 1.4rem;
