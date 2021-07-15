@@ -9,9 +9,7 @@ const addNewListButton = document.querySelector(".new-list-button");
 const createdLists = document.querySelector(".created-lists");
 const doneButton = document.querySelector(".add-task-button");
 const editButton = document.querySelector(".edit-task-button");
-//const allLists = new List("All Lists", []);
 const defaultList = new List("Default", []);
-//lists.push(allLists);
 lists.push(defaultList);
 
 function init() {
@@ -19,10 +17,12 @@ function init() {
 	defaultSelected.classList.add("selected-list");
 	addNewListButton.addEventListener("click", (e) => {
 		createNewList();
+		sortTasks();
 	});
 
 	doneButton.addEventListener("click", (e) => {
 		addTaskToDiv();
+		sortTasks();
 		console.log(lists);
 	});
 
@@ -35,11 +35,16 @@ function init() {
 }
 
 function createNewList() {
-	const newList = document.createElement("li");
-	newList.dataset.list = addNewListInput.value;
-	newList.innerHTML = `${addNewListInput.value} <i class="fas fa-times-circle" data-delete="${addNewListInput.value}"></i>`;
-	createdLists.appendChild(newList);
-	lists.push(new List(addNewListInput.value, []));
+	if (addNewListInput.value == "") {
+		return;
+	} else {
+		const newList = document.createElement("li");
+		newList.dataset.list = addNewListInput.value;
+		newList.innerHTML = `${addNewListInput.value} <i class="fas fa-times-circle" data-delete="${addNewListInput.value}"></i>`;
+		createdLists.appendChild(newList);
+		lists.push(new List(addNewListInput.value, []));
+		addNewListInput.value = "";
+	}
 }
 
 function deleteList() {
@@ -48,7 +53,12 @@ function deleteList() {
 			let index;
 			for (let i = 0; i < lists.length; i++) {
 				if (lists[i].name == e.target.parentElement.innerText) {
-					delete lists[i];
+					if (lists.length == 1) {
+						alert("Error: Cannot delete all lists");
+						return;
+					} else {
+						lists.splice(i, 1);
+					}
 				}
 			}
 
@@ -63,6 +73,7 @@ function deleteList() {
 
 			if (deleteList.classList.contains("selected-list")) {
 				swapListOnDelete();
+				showTasksCorrespondingToList();
 			}
 		}
 	});
@@ -119,12 +130,16 @@ function showTasksCorrespondingToList() {
 
 					const priorityColor = newTask.querySelector(".priority");
 
-					if (task.urgent) priorityColor.style.background = "red";
-					if (task.normal) priorityColor.style.background = "blue";
+					if (task.urgent) priorityColor.style.background = "#c81d25";
+					if (task.normal) priorityColor.style.background = "#7189ff";
 
 					newTask.classList.add("task");
+
+					if (task.complete) newTask.classList.add("completed");
+
 					taskDiv.appendChild(newTask);
 				});
+				sortTasks();
 				newTaskDisplay();
 			}
 		}
@@ -132,8 +147,10 @@ function showTasksCorrespondingToList() {
 }
 
 function swapListOnDelete() {
-	const allLists = document.querySelector(`[data-list="All Lists"]`);
-	allLists.classList.add("selected-list");
+	const swapDefault = document.querySelector(
+		`[data-list="${lists[0].name}"]`
+	);
+	swapDefault.classList.add("selected-list");
 }
 
 function newTaskDisplay() {
@@ -220,8 +237,8 @@ function addTaskToDiv() {
 
 	const priorityColor = newTask.querySelector(".priority");
 
-	if (urgent.checked) priorityColor.style.background = "red";
-	if (normal.checked) priorityColor.style.background = "blue";
+	if (urgent.checked) priorityColor.style.background = "#c81d25";
+	if (normal.checked) priorityColor.style.background = "#7189ff";
 
 	newTask.classList.add("task");
 	taskDiv.appendChild(newTask);
@@ -287,6 +304,18 @@ function completedTask() {
 				`[data-task="${e.target.parentElement.dataset.task}"]`
 			);
 			completeButton.classList.toggle("completed");
+			for (let i = 0; i < lists.length; i++) {
+				for (let j = 0; j < lists[i].tasks.length; j++) {
+					if (
+						lists[i].tasks[j].title ==
+						e.target.parentElement.dataset.task
+					) {
+						lists[i].tasks[j].complete =
+							!lists[i].tasks[j].complete;
+						console.log(lists[i].tasks[j].complete);
+					}
+				}
+			}
 		}
 	});
 }
@@ -327,14 +356,23 @@ function editTask() {
 				}
 			}
 			editButton.addEventListener("click", (e) => {
-				console.log("test");
-				console.log("test2");
-				lists[indexI].tasks[indexJ].title = title.value;
-				lists[indexI].tasks[indexJ].description = description.value;
-				lists[indexI].tasks[indexJ].dueDate = dueDate.value;
-				lists[indexI].tasks[indexJ].urgent = urgent.checked;
-				lists[indexI].tasks[indexJ].normal = normal.checked;
-				taskElement.innerHTML = `<div class="priority"></div>
+				if (
+					title.value == "" ||
+					description.value == "" ||
+					dueDate.value == "" ||
+					(!urgent.checked && !normal.checked)
+				) {
+					alert("fill all forms");
+					return;
+				} else {
+					console.log("test");
+					console.log("test2");
+					lists[indexI].tasks[indexJ].title = title.value;
+					lists[indexI].tasks[indexJ].description = description.value;
+					lists[indexI].tasks[indexJ].dueDate = dueDate.value;
+					lists[indexI].tasks[indexJ].urgent = urgent.checked;
+					lists[indexI].tasks[indexJ].normal = normal.checked;
+					taskElement.innerHTML = `<div class="priority"></div>
                 <i class="fas fa-times-circle delete-task"></i>
                 <h5>${title.value}</h5>
                 <p>
@@ -346,15 +384,19 @@ function editTask() {
                     ${format(new Date(dueDate.value), "MM/dd/yyyy")}
                 </span>
                 <i class="fas fa-edit"></i>`;
-				const priorityColor = taskElement.querySelector(".priority");
+					const priorityColor =
+						taskElement.querySelector(".priority");
 
-				if (urgent.checked) priorityColor.style.background = "red";
-				if (normal.checked) priorityColor.style.background = "blue";
+					if (urgent.checked)
+						priorityColor.style.background = "#c81d25";
+					if (normal.checked)
+						priorityColor.style.background = "#7189ff";
 
-				closeNewTaskDisplay();
-				editButton.classList.add("hide");
-				doneButton.classList.remove("hide");
-				showTasksCorrespondingToList();
+					closeNewTaskDisplay();
+					editButton.classList.add("hide");
+					doneButton.classList.remove("hide");
+					showTasksCorrespondingToList();
+				}
 			});
 		}
 	});
@@ -362,20 +404,23 @@ function editTask() {
 
 function sortTasks() {
 	for (let i = 0; i < lists.length; i++) {
-		lists[i].tasks.sort(function (a, b) {
-			if (a.dueDate < b.dueDate) {
-				return -1;
-			}
-			if (a.dueDate > b.dueDate) {
-				return 1;
-			}
-			return 0;
-		});
-		console.log("sorted");
-	}
-
-	for (let i = 0; i < lists.length; i++) {
-		lists[i].tasks.sort((a, b) => b.urgent - a.urgent);
-		console.log("sorted");
+		if (lists[i].tasks.length == 0) {
+			console.log("What");
+		} else {
+			lists[i].tasks.sort(function (a, b) {
+				if (a.dueDate < b.dueDate) {
+					return -1;
+				}
+				if (a.dueDate > b.dueDate) {
+					return 1;
+				}
+				return 0;
+			});
+			console.log("sorted");
+			lists[i].tasks.sort((a, b) => b.urgent - a.urgent);
+			console.log("sorted");
+			lists[i].tasks.sort((a, b) => a.complete - b.complete);
+			console.log("sorted");
+		}
 	}
 }
