@@ -86,6 +86,7 @@ function selectList() {
 }
 
 function showTasksCorrespondingToList() {
+	sortTasks();
 	lists.forEach((list) => {
 		if (list.name == document.querySelector(".selected-list").innerText) {
 			if (list.tasks.length == 0) {
@@ -224,6 +225,7 @@ function addTaskToDiv() {
 
 	newTask.classList.add("task");
 	taskDiv.appendChild(newTask);
+	showTasksCorrespondingToList();
 
 	resetForms();
 	closeNewTaskDisplay();
@@ -352,67 +354,23 @@ function editTask() {
 				closeNewTaskDisplay();
 				editButton.classList.add("hide");
 				doneButton.classList.remove("hide");
+				showTasksCorrespondingToList();
 			});
 		}
 	});
 }
 
-function updateTasks() {
+function sortTasks() {
 	for (let i = 0; i < lists.length; i++) {
-		for (let j = 0; j < lists[i].tasks.length; j++) {}
+		lists[i].tasks.sort(function (a, b) {
+			if (a.title < b.title) {
+				return -1;
+			}
+			if (a.title > b.title) {
+				return 1;
+			}
+			return 0;
+		});
+		console.log("sorted");
 	}
 }
-
-/*function editTask() {
-	document.addEventListener("click", (e) => {
-		if (e.target.classList.contains("fa-edit")) {
-			openNewTaskDisplay();
-			tasks.forEach((task) => {
-				if (task.getTitle() == e.target.parentElement.dataset.task) {
-					setForms(
-						task.getTitle(),
-						task.getDescription(),
-						task.getDueDate(),
-						task.getUrgent(),
-						task.getNormal()
-					);
-					editTaskDoneButton(task.getTitle());
-				}
-			});
-		}
-	});
-}
-
-function editTaskDoneButton(taskData) {
-	const title = document.querySelector("#new-book-title");
-	const description = document.querySelector("#new-book-description");
-	const dueDate = document.querySelector("#new-book-due-date");
-	const urgent = document.querySelector("#urgent");
-	const normal = document.querySelector("#normal");
-	const task = document.querySelector(`[data-task="${taskData}"]`);
-
-	doneButton.addEventListener("click", (e) => {
-		task.innerHTML = "";
-		task.dataset.task = `${title.value}`;
-		task.innerHTML = `<div class="priority"></div>
-        <i class="fas fa-times-circle delete-task"></i>
-        <h5>${title.value}</h5>
-        <p>
-            ${description.value}
-        </p>
-        <i class="fas fa-check-circle"></i>
-        <span
-            >Due date <br />
-            ${dueDate.value}
-        </span>
-        <i class="fas fa-edit"></i>`;
-
-		const priorityColor = task.querySelector(".priority");
-
-		if (urgent.checked) priorityColor.style.background = "red";
-		if (normal.checked) priorityColor.style.background = "blue";
-
-		resetForms();
-		closeNewTaskDisplay();
-	});
-}*/
