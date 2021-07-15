@@ -363,14 +363,19 @@ function editTask() {
 function sortTasks() {
 	for (let i = 0; i < lists.length; i++) {
 		lists[i].tasks.sort(function (a, b) {
-			if (a.title < b.title) {
+			if (a.dueDate < b.dueDate) {
 				return -1;
 			}
-			if (a.title > b.title) {
+			if (a.dueDate > b.dueDate) {
 				return 1;
 			}
 			return 0;
 		});
+		console.log("sorted");
+	}
+
+	for (let i = 0; i < lists.length; i++) {
+		lists[i].tasks.sort((a, b) => b.urgent - a.urgent);
 		console.log("sorted");
 	}
 }
